@@ -46,6 +46,11 @@
           <span class="mode-name">飞机大战</span>
           <span class="mode-desc">开飞机打字怪</span>
         </button>
+        <button class="mode-card" data-mode="write">
+          <span class="mode-emoji">✍️</span>
+          <span class="mode-name">书写乐园</span>
+          <span class="mode-desc">手指写字词</span>
+        </button>
         <button class="mode-card" data-mode="mistakes">
           <span class="mode-emoji">📝</span>
           <span class="mode-name">错字本</span>
@@ -166,6 +171,42 @@
     <div class="plane-target">🎯 击落 <b id="plane-target-py">píng</b> 的汉字战机！</div>
     <canvas id="plane-canvas"></canvas>
     <div class="plane-tip">👆 手指拖动飞机移动，会自动开火</div>
+  </div>
+
+  <!-- 书写乐园 -->
+  <div id="screen-write" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="write-back">‹</button>
+      <div class="hud">
+        <span class="hud-item">✍️ <b id="write-q">1/10</b></span>
+      </div>
+      <div class="topbar-spacer"></div>
+    </div>
+    <div class="progress-wrap"><div class="progress-bar" id="write-progress"></div></div>
+    <div class="write-card">
+      <div class="write-char" id="write-char">字</div>
+      <div class="write-meta">
+        <div class="write-py" id="write-py">zì</div>
+        <div class="write-words" id="write-words">写字</div>
+      </div>
+      <button class="icon-btn" id="write-speak">🔊</button>
+    </div>
+    <div class="write-toolbar">
+      <button class="btn-secondary small" id="write-toggle-guide">描红：开</button>
+      <button class="btn-secondary small" id="write-toggle-mode">练字</button>
+      <div class="write-colors" id="write-colors">
+        <button class="color-dot sel" data-c="#4dabf7" style="background:#4dabf7"></button>
+        <button class="color-dot" data-c="#ff6b6b" style="background:#ff6b6b"></button>
+        <button class="color-dot" data-c="#69db7c" style="background:#69db7c"></button>
+        <button class="color-dot" data-c="#ffa94d" style="background:#ffa94d"></button>
+        <button class="color-dot" data-c="#b197fc" style="background:#b197fc"></button>
+      </div>
+    </div>
+    <canvas id="write-canvas"></canvas>
+    <div class="write-actions">
+      <button class="btn-secondary" id="write-clear">🧹 清除重写</button>
+      <button class="btn-primary" id="write-next">写好了 →</button>
+    </div>
   </div>
 
   <!-- 错字本 -->

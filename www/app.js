@@ -40,7 +40,7 @@ try {
   if (s) { var p = JSON.parse(s); for (var k in p) save[k] = p[k]; }
 } catch(e){}
 /* v1.3 新增模式存档迁移：老存档补上 monster / plane */
-['match','pinyin','dictation','monster','plane'].forEach(function(m){
+['match','pinyin','dictation','monster','plane','write'].forEach(function(m){
   if(!save.stars[m]) save.stars[m]={};
   if(save.unlocked[m]===undefined) save.unlocked[m]=0;
 });
@@ -129,7 +129,8 @@ var SFX = {
     }catch(e){}
   },
   shieldBreak: function(){ var t=now(); noiseBurst(t,0.28,0.3,3200); tone(1250,t,0.18,'square',0.1); tone(820,t+0.09,0.24,'square',0.09); },
-  defeated: function(){ var t=now(); [392,523,659,784].forEach(function(f,i){ tone(f,t+i*0.08,0.15,'triangle',0.22); }); }
+  defeated: function(){ var t=now(); [392,523,659,784].forEach(function(f,i){ tone(f,t+i*0.08,0.15,'triangle',0.22); }); },
+  stroke: function(){ var t=now(); noiseBurst(t,0.06,0.05,2500); }
 };
 
 /* ---------- 朗读 (听写用) ---------- */
@@ -184,7 +185,7 @@ function comboBanner(text){
 }
 
 /* ---------- 屏幕 ---------- */
-var screens=['screen-home','screen-levels','screen-match','screen-pinyin','screen-dictation','screen-monster','screen-plane','screen-mistakes'];
+var screens=['screen-home','screen-levels','screen-match','screen-pinyin','screen-dictation','screen-monster','screen-plane','screen-write','screen-mistakes'];
 function show(id){ screens.forEach(function(s){document.getElementById(s).classList.toggle('active',s===id);}); }
 function el(id){ return document.getElementById(id); }
 function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;} return a; }
@@ -198,7 +199,7 @@ function refreshHome(){
 
 /* ---------- 关卡选择 ---------- */
 var curMode=null;
-var MODE_NAMES={match:'配对消消乐',pinyin:'看拼音选字',dictation:'听写闯关',monster:'打怪兽',plane:'飞机大战'};
+var MODE_NAMES={match:'配对消消乐',pinyin:'看拼音选字',dictation:'听写闯关',monster:'打怪兽',plane:'飞机大战',write:'书写乐园'};
 document.querySelectorAll('.mode-card').forEach(function(btn){
   btn.addEventListener('click',function(){
     SFX.click();
@@ -237,6 +238,7 @@ function startLevel(mode,idx){
   else if(mode==='dictation') Dict.start(idx);
   else if(mode==='monster') Monster.start(idx);
   else if(mode==='plane') Plane.start(idx);
+  else if(mode==='write') Write.start(idx);
 }
 
 /* ---------- 过关 ---------- */
@@ -947,6 +949,126 @@ var Plane={
   }
 };
 el('plane-back').addEventListener('click',function(){SFX.click();Plane.stop();curMode='plane';renderLevels();show('screen-levels');});
+
+/* ---------- 模式6: 书写乐园 ---------- */
+var Write={
+  idx:0, qs:[], qi:0, ch:null, mode:'char', guide:true, color:'#4dabf7', text:'',
+  cv:null, ctx:null, W:0, H:0, drawing:false, last:null, wrote:false,
+  start:function(idx){
+    this.idx=idx; this.qs=shuffle(LEVELS[idx].chars.slice()); this.qi=0;
+    show('screen-write');
+    this.initCanvas();
+    this.next();
+  },
+  initCanvas:function(){
+    this.cv=el('write-canvas');
+    this.W=this.cv.clientWidth||300; this.H=this.cv.clientHeight||300;
+    var dpr=window.devicePixelRatio||1;
+    this.cv.width=this.W*dpr; this.cv.height=this.H*dpr;
+    this.ctx=this.cv.getContext('2d'); this.ctx.setTransform(dpr,0,0,dpr,0,0);
+    var self=this;
+    var pos=function(e){
+      var r=self.cv.getBoundingClientRect();
+      var t=e.touches?e.touches[0]:e;
+      return {x:t.clientX-r.left, y:t.clientY-r.top};
+    };
+    var start=function(e){ e.preventDefault(); self.drawing=true; self.wrote=true; self.last=pos(e); self.dot(self.last); SFX.stroke(); };
+    var mv=function(e){ e.preventDefault(); if(!self.drawing) return; var p=pos(e); self.line(self.last,p); self.last=p; };
+    var end=function(){ self.drawing=false; };
+    this.cv.ontouchstart=start; this.cv.ontouchmove=mv; this.cv.ontouchend=end; this.cv.ontouchcancel=end;
+    this.cv.onmousedown=function(e){ self.drawing=true; self.wrote=true; self.last=pos(e); self.dot(self.last); };
+    this.cv.onmousemove=function(e){ if(self.drawing){ var p=pos(e); self.line(self.last,p); self.last=p; } };
+    this.cv.onmouseup=end; this.cv.onmouseleave=end;
+  },
+  dot:function(p){ var ctx=this.ctx; ctx.fillStyle=this.color; ctx.beginPath(); ctx.arc(p.x,p.y,5,0,6.29); ctx.fill(); },
+  line:function(a,b){
+    var ctx=this.ctx;
+    ctx.strokeStyle=this.color; ctx.lineWidth=10; ctx.lineCap='round'; ctx.lineJoin='round';
+    ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+  },
+  drawGrid:function(){
+    var ctx=this.ctx; ctx.clearRect(0,0,this.W,this.H);
+    var n=this.text.length;
+    var gap=14, size=Math.min((this.W-gap*(n-1))/n, this.H-20);
+    var totalW=size*n+gap*(n-1);
+    var x0=(this.W-totalW)/2, y0=(this.H-size)/2;
+    for(var i=0;i<n;i++){
+      var x=x0+i*(size+gap), y=y0;
+      ctx.strokeStyle='#e8590c'; ctx.lineWidth=3.5;
+      ctx.strokeRect(x,y,size,size);
+      ctx.strokeStyle='#ced4da'; ctx.lineWidth=1.5; ctx.setLineDash([8,7]);
+      ctx.beginPath();
+      ctx.moveTo(x+size/2,y+4); ctx.lineTo(x+size/2,y+size-4);
+      ctx.moveTo(x+4,y+size/2); ctx.lineTo(x+size-4,y+size/2);
+      ctx.moveTo(x+6,y+6); ctx.lineTo(x+size-6,y+size-6);
+      ctx.moveTo(x+size-6,y+6); ctx.lineTo(x+6,y+size-6);
+      ctx.stroke(); ctx.setLineDash([]);
+      if(this.guide){
+        ctx.fillStyle='rgba(150,150,160,0.42)';
+        ctx.font='700 '+Math.floor(size*0.7)+'px "PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif';
+        ctx.textAlign='center'; ctx.textBaseline='middle';
+        ctx.fillText(this.text[i], x+size/2, y+size/2+3);
+      }
+    }
+  },
+  updateText:function(){
+    if(this.mode==='char'){ this.text=this.ch.c; }
+    else {
+      var w=null;
+      for(var i=0;i<this.ch.w.length;i++){ if(this.ch.w[i].length===2){ w=this.ch.w[i]; break; } }
+      this.text=w||this.ch.w[0].slice(0,2);
+    }
+    this.wrote=false;
+    this.drawGrid();
+  },
+  next:function(){
+    if(this.qi>=this.qs.length){ this.win(); return; }
+    this.ch=this.qs[this.qi];
+    el('write-q').textContent=(this.qi+1)+'/'+this.qs.length;
+    el('write-progress').style.width=(this.qi/this.qs.length*100)+'%';
+    el('write-char').textContent=this.ch.c;
+    el('write-py').textContent=this.ch.py;
+    el('write-words').textContent=this.ch.w.join(' · ');
+    this.updateText();
+    this.speakChar();
+  },
+  speakChar:function(){
+    speak(this.ch.c+'。'+this.ch.w.join('，'));
+  },
+  clear:function(){ SFX.click(); this.wrote=false; this.drawGrid(); },
+  done:function(){
+    var self=this;
+    SFX.correct();
+    var r=this.cv.getBoundingClientRect();
+    particles(r.left+r.width/2, r.top+60, 22);
+    floatScore(r.left+r.width/2, r.top+80, '⭐ 写得好！');
+    setTimeout(function(){ self.qi++; self.next(); }, 650);
+  },
+  win:function(){
+    finishLevel('write',this.idx,3);
+    showWin(3,'本关 '+this.qs.length+' 个字词<br>全部书写完成！', levelNav('write',this.idx));
+  }
+};
+el('write-back').addEventListener('click',function(){SFX.click();curMode='write';renderLevels();show('screen-levels');});
+el('write-speak').addEventListener('click',function(){SFX.click();Write.speakChar();});
+el('write-clear').addEventListener('click',function(){Write.clear();});
+el('write-next').addEventListener('click',function(){Write.done();});
+el('write-toggle-guide').addEventListener('click',function(){
+  Write.guide=!Write.guide;
+  el('write-toggle-guide').textContent='描红：'+(Write.guide?'开':'关');
+  SFX.click(); Write.drawGrid();
+});
+el('write-toggle-mode').addEventListener('click',function(){
+  Write.mode=(Write.mode==='char')?'word':'char';
+  el('write-toggle-mode').textContent=(Write.mode==='char')?'练字':'练词';
+  SFX.click(); Write.updateText();
+});
+document.querySelectorAll('#write-colors .color-dot').forEach(function(d){
+  d.addEventListener('click',function(){
+    document.querySelectorAll('#write-colors .color-dot').forEach(function(x){x.classList.remove('sel');});
+    d.classList.add('sel'); Write.color=d.getAttribute('data-c'); SFX.click();
+  });
+});
 
 /* ---------- 错字本 ---------- */
 function renderMistakes(){
