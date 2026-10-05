@@ -168,3 +168,73 @@ body {
   .mode-card { padding: 12px 8px; } .mode-emoji { font-size: 32px; }
   .quiz-pinyin { font-size: 44px; padding: 10px 34px; }
 }
+
+/* ===== v1.3: 全局动画升级 ===== */
+.screen { position: relative; }
+.screen.active { animation: screenIn .28s ease-out; }
+@keyframes screenIn { from { opacity: 0; transform: translateY(14px) scale(.995); } }
+.mode-card { animation: cardUp .45s backwards; }
+.mode-card:nth-child(1){animation-delay:.04s}.mode-card:nth-child(2){animation-delay:.09s}
+.mode-card:nth-child(3){animation-delay:.14s}.mode-card:nth-child(4){animation-delay:.19s}
+.mode-card:nth-child(5){animation-delay:.24s}.mode-card:nth-child(6){animation-delay:.29s}
+@keyframes cardUp { from { opacity: 0; transform: translateY(22px) scale(.96); } }
+.mode-card { transition: transform .15s; }
+.mode-card:hover { transform: translateY(-3px); }
+.cloud { position: absolute; pointer-events: none; opacity: .55; z-index: 0;
+  animation: drift 14s linear infinite; }
+.cloud.c1 { top: 6%; font-size: 64px; }
+.cloud.c2 { top: 18%; font-size: 42px; animation-delay: -5s; animation-duration: 18s; }
+.cloud.c3 { top: 2%; font-size: 34px; animation-delay: -9s; animation-duration: 22s; }
+@keyframes drift { from { left: -90px; } to { left: 105%; } }
+.home-wrap { position: relative; z-index: 1; }
+.level-btn { animation: cardUp .3s backwards; }
+.quiz-options .opt-btn { animation: cardUp .32s backwards; }
+.quiz-options .opt-btn:nth-child(1){animation-delay:.05s}
+.quiz-options .opt-btn:nth-child(2){animation-delay:.1s}
+.quiz-options .opt-btn:nth-child(3){animation-delay:.15s}
+.quiz-options .opt-btn:nth-child(4){animation-delay:.2s}
+.quiz-options .opt-btn:nth-child(n+5){animation-delay:.25s}
+
+/* ===== v1.3: 打怪兽 ===== */
+.monster-arena { flex: 1; position: relative; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; overflow: hidden; min-height: 280px;
+  background: linear-gradient(180deg, #232344 0%, #3a3a5e 55%, #4a4e69 100%);
+  border-radius: 24px; margin: 0 16px; box-shadow: inset 0 0 60px rgba(0,0,0,.35); }
+.arena-moon { position: absolute; top: 14px; right: 20px; font-size: 40px; opacity: .9;
+  animation: bounce 3s ease-in-out infinite; }
+.monster { position: relative; animation: monsterIdle 2.2s ease-in-out infinite; }
+.monster-emoji { font-size: 108px; filter: drop-shadow(0 10px 14px rgba(0,0,0,.45)); }
+.monster-char { position: absolute; left: 50%; top: 64%; transform: translate(-50%,-50%);
+  width: 82px; height: 82px; border-radius: 50%;
+  background: rgba(10,10,25,.55); border: 3px solid rgba(255,255,255,.55);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 46px; font-weight: 900; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,.7); }
+.monster.enter { animation: monsterEnter .55s cubic-bezier(.2,1.35,.4,1); }
+.monster.hit { animation: monsterHit .3s; }
+.monster.defeated { animation: monsterDie .34s forwards; }
+.monster.lunge { animation: monsterLunge .65s; }
+@keyframes monsterIdle { 0%,100%{transform:translateY(0) rotate(-1.5deg)} 50%{transform:translateY(-11px) rotate(1.5deg)} }
+@keyframes monsterEnter { from { transform: translateY(-320px) scale(.4); opacity: 0; } }
+@keyframes monsterHit { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-16px) rotate(-5deg) scale(1.05)} 60%{transform:translateX(13px) rotate(4deg)} }
+@keyframes monsterDie { 40%{transform:scale(1.2) rotate(20deg)} 100%{transform:scale(0) rotate(160deg); opacity:0} }
+@keyframes monsterLunge { 35%{transform:translateY(46px) scale(1.18)} }
+.player-side { position: absolute; bottom: 12px; font-size: 56px;
+  filter: drop-shadow(0 6px 8px rgba(0,0,0,.4)); animation: monsterIdle 2.6s ease-in-out infinite; }
+.monster-quiz { padding: 10px 20px 22px; display: flex; flex-direction: column; gap: 10px; align-items: center; }
+.fireball { position: fixed; font-size: 42px; z-index: 1002; pointer-events: none; }
+.shake-screen { animation: shake .4s; }
+
+/* ===== v1.3: 飞机大战 ===== */
+.plane-target { text-align: center; font-size: 18px; font-weight: 800; padding: 9px 8px;
+  background: var(--card); margin: 2px 16px 0; border-radius: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08); animation: cardUp .3s backwards; }
+.plane-target b { color: var(--red); font-size: 26px; letter-spacing: 1px; }
+#plane-canvas { flex: 1; margin: 8px 16px 6px; border-radius: 20px; touch-action: none;
+  box-shadow: 0 6px 22px rgba(0,0,0,.25); min-height: 200px; }
+.plane-tip { text-align: center; color: var(--ink-soft); font-size: 13px; padding-bottom: 12px; }
+
+/* iPad 大屏：怪兽更大 */
+@media (min-width: 700px) {
+  .monster-emoji { font-size: 140px; }
+  .monster-char { width: 100px; height: 100px; font-size: 56px; }
+}

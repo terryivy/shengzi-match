@@ -13,6 +13,9 @@
 
   <!-- 首页 -->
   <div id="screen-home" class="screen active">
+    <div class="cloud c1">☁️</div>
+    <div class="cloud c2">☁️</div>
+    <div class="cloud c3">☁️</div>
     <div class="home-wrap">
       <div class="mascot" id="home-mascot">🐱</div>
       <h1 class="game-title">生字消消乐</h1>
@@ -32,6 +35,16 @@
           <span class="mode-emoji">🎧</span>
           <span class="mode-name">听写闯关</span>
           <span class="mode-desc">听词语写汉字</span>
+        </button>
+        <button class="mode-card" data-mode="monster">
+          <span class="mode-emoji">👹</span>
+          <span class="mode-name">打怪兽</span>
+          <span class="mode-desc">拼音答对打怪兽</span>
+        </button>
+        <button class="mode-card" data-mode="plane">
+          <span class="mode-emoji">✈️</span>
+          <span class="mode-name">飞机大战</span>
+          <span class="mode-desc">开飞机打字怪</span>
         </button>
         <button class="mode-card" data-mode="mistakes">
           <span class="mode-emoji">📝</span>
@@ -107,6 +120,48 @@
         <button class="btn-primary" id="dict-submit">确定</button>
       </div>
     </div>
+  </div>
+
+  <!-- 打怪兽 -->
+  <div id="screen-monster" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="monster-back">‹</button>
+      <div class="hud">
+        <span class="hud-item">❤️ <b id="monster-hp">3</b></span>
+        <span class="hud-item">👹 <b id="monster-count">1/10</b></span>
+        <span class="hud-item">⭐ <b id="monster-score">0</b></span>
+      </div>
+      <div class="topbar-spacer"></div>
+    </div>
+    <div class="progress-wrap"><div class="progress-bar" id="monster-progress"></div></div>
+    <div class="monster-arena" id="monster-arena">
+      <div class="arena-moon">🌙</div>
+      <div class="monster" id="monster-body">
+        <div class="monster-emoji" id="monster-emoji">👹</div>
+        <div class="monster-char" id="monster-char">字</div>
+      </div>
+      <div class="player-side" id="player-side">🦸</div>
+    </div>
+    <div class="monster-quiz">
+      <div class="quiz-hint">怪兽身上的字，拼音是？</div>
+      <div class="quiz-options" id="monster-options"></div>
+    </div>
+  </div>
+
+  <!-- 飞机大战 -->
+  <div id="screen-plane" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="plane-back">‹</button>
+      <div class="hud">
+        <span class="hud-item">🛡️ <b id="plane-shield">3</b></span>
+        <span class="hud-item">🎯 <b id="plane-kills">0/6</b></span>
+        <span class="hud-item">⭐ <b id="plane-score">0</b></span>
+      </div>
+      <div class="topbar-spacer"></div>
+    </div>
+    <div class="plane-target">🎯 击落 <b id="plane-target-py">píng</b> 的汉字战机！</div>
+    <canvas id="plane-canvas"></canvas>
+    <div class="plane-tip">👆 手指拖动飞机移动，会自动开火</div>
   </div>
 
   <!-- 错字本 -->
