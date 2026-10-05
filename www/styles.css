@@ -195,40 +195,67 @@ body {
 .quiz-options .opt-btn:nth-child(4){animation-delay:.2s}
 .quiz-options .opt-btn:nth-child(n+5){animation-delay:.25s}
 
-/* ===== v1.3: 打怪兽 ===== */
+/* ===== v1.4: 打怪兽（生动升级） ===== */
 .monster-arena { flex: 1; position: relative; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; overflow: hidden; min-height: 280px;
-  background: linear-gradient(180deg, #232344 0%, #3a3a5e 55%, #4a4e69 100%);
-  border-radius: 24px; margin: 0 16px; box-shadow: inset 0 0 60px rgba(0,0,0,.35); }
-.arena-moon { position: absolute; top: 14px; right: 20px; font-size: 40px; opacity: .9;
-  animation: bounce 3s ease-in-out infinite; }
-.monster { position: relative; animation: monsterIdle 2.2s ease-in-out infinite; }
-.monster-emoji { font-size: 108px; filter: drop-shadow(0 10px 14px rgba(0,0,0,.45)); }
-.monster-char { position: absolute; left: 50%; top: 64%; transform: translate(-50%,-50%);
+  align-items: center; justify-content: center; overflow: hidden; min-height: 300px;
+  background: linear-gradient(180deg, #141428 0%, #232344 45%, #3a3a5e 75%, #4a4e69 100%);
+  border-radius: 24px; margin: 0 16px; box-shadow: inset 0 0 60px rgba(0,0,0,.4); }
+.monster-arena.hitstop, .monster-arena.hitstop * { animation-play-state: paused !important; }
+.arena-stars { position: absolute; inset: 0; pointer-events: none; }
+.astar { position: absolute; background: #fff; border-radius: 50%; animation: twinkle 3s ease-in-out infinite; }
+@keyframes twinkle { 0%,100%{opacity:.12; transform:scale(.7)} 50%{opacity:1; transform:scale(1.25)} }
+.arena-moon { position: absolute; top: 12px; right: 18px; font-size: 42px; opacity: .95;
+  animation: moonGlow 4s ease-in-out infinite; filter: drop-shadow(0 0 18px rgba(255,244,180,.7)); }
+@keyframes moonGlow { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+.arena-fog { position: absolute; bottom: -8px; left: -10%; right: -10%; height: 64px; pointer-events: none;
+  background: radial-gradient(ellipse 40% 100% at 20% 100%, rgba(150,160,200,.22), transparent 70%),
+              radial-gradient(ellipse 40% 100% at 70% 100%, rgba(150,160,200,.18), transparent 70%);
+  animation: fogDrift 9s ease-in-out infinite alternate; }
+@keyframes fogDrift { from { transform: translateX(-4%); } to { transform: translateX(4%); } }
+.monster-shadow { position: absolute; bottom: 24%; left: 50%; width: 140px; height: 24px;
+  background: radial-gradient(ellipse, rgba(0,0,0,.5), transparent 70%); border-radius: 50%;
+  transform: translateX(-50%); animation: shadowPulse 2.2s ease-in-out infinite; pointer-events: none; }
+@keyframes shadowPulse { 0%,100%{transform:translateX(-50%) scale(1); opacity:.85} 50%{transform:translateX(-50%) scale(.8); opacity:.45} }
+.monster { position: relative; z-index: 2; animation: monsterIdle 2.2s ease-in-out infinite; }
+.monster-emoji { font-size: 108px; filter: drop-shadow(0 10px 14px rgba(0,0,0,.45)); display: block; }
+.monster-anger { position: absolute; top: -4px; right: 2px; font-size: 36px; opacity: 0; transform: scale(0); pointer-events: none; }
+.monster.angry .monster-anger { animation: angerPop .55s forwards; }
+@keyframes angerPop { 0%{opacity:0; transform:scale(0) rotate(-25deg)} 55%{opacity:1; transform:scale(1.35) rotate(12deg)} 100%{opacity:1; transform:scale(1) rotate(0)} }
+.monster-char { position: absolute; left: 50%; top: 66%; transform: translate(-50%,-50%);
   width: 82px; height: 82px; border-radius: 50%;
   background: rgba(10,10,25,.55); border: 3px solid rgba(255,255,255,.55);
   display: flex; align-items: center; justify-content: center;
   font-size: 46px; font-weight: 900; color: #fff; text-shadow: 0 2px 8px rgba(0,0,0,.7); }
-.monster.enter { animation: monsterEnter .55s cubic-bezier(.2,1.35,.4,1); }
-.monster.hit { animation: monsterHit .3s; }
-.monster.defeated { animation: monsterDie .34s forwards; }
+.monster.enter { animation: monsterEnter .6s cubic-bezier(.25,1.2,.4,1); }
+.monster.hit { animation: monsterHit .32s; }
+.monster.hit .monster-emoji { filter: brightness(2.2) drop-shadow(0 0 22px rgba(255,80,80,.9)); }
+.monster.defeated { animation: monsterDie .38s forwards; }
 .monster.lunge { animation: monsterLunge .65s; }
-@keyframes monsterIdle { 0%,100%{transform:translateY(0) rotate(-1.5deg)} 50%{transform:translateY(-11px) rotate(1.5deg)} }
-@keyframes monsterEnter { from { transform: translateY(-320px) scale(.4); opacity: 0; } }
-@keyframes monsterHit { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-16px) rotate(-5deg) scale(1.05)} 60%{transform:translateX(13px) rotate(4deg)} }
-@keyframes monsterDie { 40%{transform:scale(1.2) rotate(20deg)} 100%{transform:scale(0) rotate(160deg); opacity:0} }
-@keyframes monsterLunge { 35%{transform:translateY(46px) scale(1.18)} }
-.player-side { position: absolute; bottom: 12px; font-size: 56px;
-  filter: drop-shadow(0 6px 8px rgba(0,0,0,.4)); animation: monsterIdle 2.6s ease-in-out infinite; }
+@keyframes monsterIdle { 0%,100%{transform:translateY(0) scale(1,1) rotate(-1.5deg)} 50%{transform:translateY(-12px) scale(1.05,.95) rotate(1.5deg)} }
+@keyframes monsterEnter { 0%{transform:translateY(-360px) scale(.45); opacity:0} 55%{transform:translateY(12px) scale(1.18,.82); opacity:1} 75%{transform:translateY(-8px) scale(.94,1.08)} 100%{transform:translateY(0) scale(1,1)} }
+@keyframes monsterHit { 0%,100%{transform:translateX(0) scale(1)} 20%{transform:translateX(-18px) rotate(-6deg) scale(1.08,.92)} 55%{transform:translateX(14px) rotate(5deg) scale(.94,1.06)} 80%{transform:translateX(-6px) rotate(-2deg)} }
+@keyframes monsterDie { 35%{transform:scale(1.25,.8) rotate(18deg)} 70%{transform:scale(.6,1.3) rotate(90deg); opacity:1} 100%{transform:scale(0) rotate(200deg); opacity:0} }
+@keyframes monsterLunge { 35%{transform:translateY(52px) scale(1.2,.85)} 70%{transform:translateY(20px) scale(1.05)} }
+.player-side { position: absolute; bottom: 12px; z-index: 2; font-size: 56px;
+  filter: drop-shadow(0 6px 8px rgba(0,0,0,.4)); animation: heroIdle 2.6s ease-in-out infinite; }
+@keyframes heroIdle { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+#player-emoji { display: inline-block; }
+#player-emoji.punch { animation: punch .42s; }
+@keyframes punch { 25%{transform:translateX(34px) scale(1.15) rotate(-8deg)} 60%{transform:translateX(10px) scale(1.05)} }
 .monster-quiz { padding: 10px 20px 22px; display: flex; flex-direction: column; gap: 10px; align-items: center; }
-.fireball { position: fixed; font-size: 42px; z-index: 1002; pointer-events: none; }
-.shake-screen { animation: shake .4s; }
+.fireball { position: fixed; font-size: 42px; z-index: 1002; pointer-events: none; filter: drop-shadow(0 0 12px rgba(255,140,0,.9)); }
+.shake-screen { animation: shakeBig .45s; }
+@keyframes shakeBig { 0%,100%{transform:translate(0)} 20%{transform:translate(-10px,4px)} 40%{transform:translate(8px,-6px)} 60%{transform:translate(-6px,-4px)} 80%{transform:translate(5px,5px)} }
+.shockwave { position: fixed; border: 5px solid rgba(255,200,90,.95); border-radius: 50%;
+  pointer-events: none; z-index: 1001; transform: translate(-50%,-50%); }
 
 /* ===== v1.3: 飞机大战 ===== */
 .plane-target { text-align: center; font-size: 18px; font-weight: 800; padding: 9px 8px;
   background: var(--card); margin: 2px 16px 0; border-radius: 14px;
   box-shadow: 0 2px 8px rgba(0,0,0,.08); animation: cardUp .3s backwards; }
 .plane-target b { color: var(--red); font-size: 26px; letter-spacing: 1px; }
+.plane-target.target-pulse { animation: targetPulse .6s; }
+@keyframes targetPulse { 0%{transform:scale(.92); box-shadow:0 0 0 var(--yellow)} 50%{transform:scale(1.04); box-shadow:0 0 22px var(--yellow)} 100%{transform:scale(1)} }
 #plane-canvas { flex: 1; margin: 8px 16px 6px; border-radius: 20px; touch-action: none;
   box-shadow: 0 6px 22px rgba(0,0,0,.25); min-height: 200px; }
 .plane-tip { text-align: center; color: var(--ink-soft); font-size: 13px; padding-bottom: 12px; }
