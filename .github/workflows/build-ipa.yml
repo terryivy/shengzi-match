@@ -1,0 +1,70 @@
+name: Build iOS IPA（巨魔/TrollStore 版）
+
+# 代码推送到 main 分支后自动编译，也可以在网页上手动触发
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - name: 拉取代码
+        uses: actions/checkout@v4
+
+      - name: 安装 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 安装依赖
+        run: npm install
+
+      # 用 Capacitor 从 capacitor.config.json 自动生成 iOS 原生工程
+      # （包名 com.terry.shengzi，显示名"生字消消乐"）
+      - name: 生成 iOS 原生工程
+        run: npx cap add ios
+
+      # 应用图标：assets/icon.png（1024x1024）
+      - name: 替换应用图标
+        run: |
+          sips -z 1024 1024 assets/icon.png --out "ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png"
+
+      - name: 同步 Capacitor iOS 工程（含 pod install）
+        run: npx cap sync ios
+
+      - name: 选择 Xcode
+        run: sudo xcode-select -s /Applications/Xcode.app || true
+
+      # TrollStore 会自己做伪签名，这里打出未签名的包即可
+      # 注意：必须用 App.xcworkspace（CocoaPods 生成）编译，直接编 .xcodeproj 会找不到 Capacitor 模块
+      - name: 编译未签名 App（Release）
+        run: |
+          cd ios/App
+          xcodebuild \
+            -workspace App.xcworkspace \
+            -scheme App \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath build \
+            CODE_SIGNING_ALLOWED=NO \
+            build
+
+      - name: 打包成 IPA
+        run: |
+          APP_PATH=$(find ios/App/build -name "App.app" -type d | head -n 1)
+          echo "找到 App: $APP_PATH"
+          test -d "$APP_PATH" || (echo "未找到 App.app" && exit 1)
+          rm -rf Payload && mkdir Payload
+          cp -R "$APP_PATH" Payload/
+          ditto -c -k --sequesterRsrc --keepParent Payload "shengzi-v1.0.ipa"
+          ls -lh "shengzi-v1.0.ipa"
+
+      - name: 上传 IPA 成品
+        uses: actions/upload-artifact@v4
+        with:
+          name: shengzi-iOS-v1.0
+          path: shengzi-v1.0.ipa
+          if-no-files-found: error
