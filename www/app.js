@@ -581,7 +581,6 @@ var Monster={
     var ch=this.qs[this.qi];
     el('monster-count').textContent=(this.qi+1)+'/'+this.qs.length;
     el('monster-progress').style.width=(this.qi/this.qs.length*100)+'%';
-    el('monster-emoji').textContent=this.faces[this.qi%this.faces.length];
     el('monster-char').textContent=ch.c;
     var body=el('monster-body');
     body.classList.remove('enter','hit','defeated','lunge','angry');
@@ -699,6 +698,11 @@ var Monster={
 el('monster-back').addEventListener('click',function(){SFX.click();curMode='monster';renderLevels();show('screen-levels');});
 
 /* ---------- 模式5: 飞机大战 ---------- */
+/* 三丽鸥角色图（canvas 用） */
+var SANRIO_IMG={};
+['kuromi','melody','cinnamoroll'].forEach(function(n){
+  var im=new Image(); im.src='img/'+n+'.png'; SANRIO_IMG[n]=im;
+});
 var Plane={
   idx:0, chars:[], target:null, score:0, shield:3, kills:0, need:6,
   cv:null, ctx:null, W:0, H:0, raf:0, running:false, lastT:0,
@@ -877,31 +881,37 @@ var Plane={
       ctx.globalAlpha=1;
     });
     ctx.textAlign='center';
-    /* 敌机 */
+    /* 敌机（库洛米） */
     this.enemies.forEach(function(e){
       var tilt=e.tp.behavior==='dive'?Math.max(-0.4,Math.min(0.4,e.vx*0.05)):Math.sin(e.wob)*0.12;
       ctx.save(); ctx.translate(e.x,e.y); ctx.rotate(tilt);
-      ctx.font='34px serif'; ctx.fillText(e.tp.emoji,0,0);
+      var esz=44;
+      if(SANRIO_IMG.kuromi.complete&&SANRIO_IMG.kuromi.naturalWidth){
+        ctx.drawImage(SANRIO_IMG.kuromi,-esz/2,-esz/2,esz,esz);
+      } else { ctx.font='34px serif'; ctx.fillText('🛸',0,0); }
       ctx.restore();
       ctx.font='bold 25px sans-serif';
       ctx.lineWidth=5; ctx.strokeStyle='rgba(0,0,0,.6)';
-      ctx.strokeText(e.ch.c,e.x,e.y+32);
-      ctx.fillStyle='#fff'; ctx.fillText(e.ch.c,e.x,e.y+32);
+      ctx.strokeText(e.ch.c,e.x,e.y+34);
+      ctx.fillStyle='#fff'; ctx.fillText(e.ch.c,e.x,e.y+34);
     });
     /* 子弹（发光） */
     ctx.shadowColor='#ffd43b'; ctx.shadowBlur=10;
     ctx.fillStyle='#ffe066';
     this.bullets.forEach(function(b){ ctx.fillRect(b.x-3,b.y-16,6,16); });
     ctx.shadowBlur=0;
-    /* 玩家（倾斜+尾焰+枪口闪光） */
+    /* 玩家：大耳狗开飞机（倾斜+尾焰+枪口闪光） */
     var tilt=Math.max(-0.35,Math.min(0.35,this.pvx*0.03));
     ctx.save(); ctx.translate(this.px,this.py); ctx.rotate(tilt);
     var fl=16+Math.random()*14;
     ctx.fillStyle='#ff922b';
-    ctx.beginPath(); ctx.moveTo(-7,20); ctx.lineTo(0,20+fl); ctx.lineTo(7,20); ctx.closePath(); ctx.fill();
+    ctx.beginPath(); ctx.moveTo(-7,22); ctx.lineTo(0,22+fl); ctx.lineTo(7,22); ctx.closePath(); ctx.fill();
     ctx.fillStyle='#ffd43b';
-    ctx.beginPath(); ctx.moveTo(-4,20); ctx.lineTo(0,20+fl*0.55); ctx.lineTo(4,20); ctx.closePath(); ctx.fill();
-    ctx.font='46px serif'; ctx.fillText('✈️',0,0);
+    ctx.beginPath(); ctx.moveTo(-4,22); ctx.lineTo(0,22+fl*0.55); ctx.lineTo(4,22); ctx.closePath(); ctx.fill();
+    var psz=58;
+    if(SANRIO_IMG.cinnamoroll.complete&&SANRIO_IMG.cinnamoroll.naturalWidth){
+      ctx.drawImage(SANRIO_IMG.cinnamoroll,-psz/2,-psz/2,psz,psz);
+    } else { ctx.font='46px serif'; ctx.fillText('✈️',0,0); }
     ctx.restore();
     if(this.muzzle>0){
       ctx.globalAlpha=this.muzzle/90;
@@ -1094,7 +1104,8 @@ el('mistakes-clear').addEventListener('click',function(){
 
 /* ---------- 启动 ---------- */
 document.addEventListener('touchmove',function(e){e.preventDefault();},{passive:false});
-el('home-mascot').addEventListener('click',function(){SFX.pop();confetti();});
+var sanrioRow=document.querySelector('.sanrio-row');
+if(sanrioRow) sanrioRow.addEventListener('click',function(){SFX.pop();confetti();});
 refreshHome();
 show('screen-home');
 })();
