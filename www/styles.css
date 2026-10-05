@@ -317,3 +317,176 @@ img.monster-emoji { filter: drop-shadow(0 10px 14px rgba(0,0,0,.45)); }
   .sanrio-avatar.bounce2 { width: 124px; height: 124px; }
   img.monster-emoji { width: 150px; height: 150px; }
 }
+
+/* ========== v1.8 三丽鸥马卡龙首页 ========== */
+#screen-home{position:relative;overflow:hidden;}
+.home-nav{
+  position:relative;z-index:5;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 18px 6px;
+}
+.home-nav-title{
+  font-size:22px;font-weight:800;color:#b5658f;
+  text-shadow:0 2px 0 #fff;
+  letter-spacing:2px;
+}
+.nav-btn{position:relative;width:48px;height:48px;font-size:24px;}
+.nav-badge{
+  position:absolute;top:-4px;right:-4px;
+  min-width:20px;height:20px;line-height:20px;
+  background:#ff6b81;color:#fff;font-size:12px;font-weight:700;
+  border-radius:10px;padding:0 4px;text-align:center;
+  box-shadow:0 2px 6px rgba(255,107,129,.4);
+}
+.home-wrap.v2{padding-top:4px;}
+.greet-card{
+  position:relative;z-index:4;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(255,255,255,.85);
+  border-radius:24px;
+  padding:18px 20px;
+  margin:8px 4px 18px;
+  box-shadow:0 8px 24px rgba(255,150,180,.18), 0 2px 8px rgba(150,180,255,.12);
+  border:2px solid #fff;
+  animation:cardIn .5s ease both;
+}
+.greet-hi{font-size:24px;font-weight:800;color:#e07b9b;margin-bottom:6px;}
+.greet-sub{font-size:15px;color:#8aa0c8;}
+.greet-img{width:76px;height:76px;object-fit:contain;animation:bob 3s ease-in-out infinite;}
+.cat-grid{
+  position:relative;z-index:4;
+  display:grid;grid-template-columns:1fr 1fr;gap:14px;
+  margin:0 4px 16px;
+}
+.cat-card{
+  border:none;cursor:pointer;
+  border-radius:26px;
+  padding:22px 10px 18px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  box-shadow:0 8px 20px rgba(0,0,0,.07);
+  border:3px solid rgba(255,255,255,.9);
+  transition:transform .15s;
+  animation:cardIn .5s ease both;
+}
+.cat-card:nth-child(2){animation-delay:.08s;}
+.cat-card:nth-child(3){animation-delay:.16s;}
+.cat-card:nth-child(4){animation-delay:.24s;}
+.cat-card:active{transform:scale(.94);}
+.cat-pink{background:linear-gradient(135deg,#ffe3ee,#ffd3e6);}
+.cat-blue{background:linear-gradient(135deg,#ddecff,#cfe4ff);}
+.cat-purple{background:linear-gradient(135deg,#e9defc,#dccdf8);}
+.cat-yellow{background:linear-gradient(135deg,#fff3d6,#ffe9bd);}
+.cat-icon{font-size:44px;line-height:1;filter:drop-shadow(0 3px 4px rgba(255,255,255,.8));}
+.cat-name{font-size:22px;font-weight:800;color:#6b5b7a;}
+.cat-desc{font-size:13px;color:#9a8aa8;}
+.mistake-strip{
+  position:relative;z-index:4;
+  display:flex;align-items:center;justify-content:space-between;
+  width:calc(100% - 8px);margin:0 4px 10px;
+  background:rgba(255,255,255,.8);
+  border:2px dashed #ffc2d4;border-radius:20px;
+  padding:14px 18px;font-size:17px;font-weight:700;color:#b5658f;
+  cursor:pointer;
+  animation:cardIn .5s .3s ease both;
+}
+.mistake-strip-count{font-size:14px;color:#9a8aa8;font-weight:500;}
+.mistake-strip-count b{color:#ff6b81;font-size:18px;}
+/* 边角三丽鸥：探头不挡字 */
+.corner-mascot{
+  position:absolute;z-index:3;
+  width:64px;height:64px;object-fit:contain;
+  pointer-events:none;opacity:.95;
+}
+.corner-mascot.tl{top:64px;left:-14px;transform:rotate(-12deg);animation:peekL 4s ease-in-out infinite;}
+.corner-mascot.tr{top:64px;right:-14px;transform:rotate(12deg);animation:peekR 4s ease-in-out infinite;}
+.corner-mascot.bl{bottom:18px;left:-10px;transform:rotate(10deg);animation:bob 3.5s ease-in-out infinite;}
+.corner-mascot.br{bottom:18px;right:-10px;transform:rotate(-10deg);animation:bob 4.2s ease-in-out infinite;}
+@keyframes peekL{0%,100%{margin-left:0;}50%{margin-left:10px;}}
+@keyframes peekR{0%,100%{margin-right:0;}50%{margin-right:10px;}}
+@keyframes cardIn{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:none;}}
+
+/* ========== 分类游戏列表 ========== */
+.cat-game-list{padding:10px 16px;display:flex;flex-direction:column;gap:14px;}
+.cat-game-card{
+  display:flex;align-items:center;gap:14px;
+  background:rgba(255,255,255,.9);
+  border:none;border-radius:22px;
+  padding:16px 18px;cursor:pointer;text-align:left;
+  box-shadow:0 6px 18px rgba(255,150,180,.12);
+  border:2px solid #fff;
+  animation:cardIn .4s ease both;
+}
+.cat-game-card:active{transform:scale(.97);}
+.cat-game-img{width:56px;height:56px;object-fit:contain;}
+.cat-game-emoji{font-size:44px;line-height:1;}
+.cat-game-text{flex:1;display:flex;flex-direction:column;gap:4px;}
+.cat-game-name{font-size:20px;font-weight:800;color:#6b5b7a;}
+.cat-game-desc{font-size:14px;color:#9a8aa8;}
+.cat-game-stars{font-size:14px;color:#e0a030;font-weight:700;white-space:nowrap;}
+
+/* ========== 课文朗读 ========== */
+.read-lesson-list{padding:10px 16px 30px;}
+.read-lesson-btn{
+  display:flex;align-items:center;justify-content:space-between;
+  width:100%;background:rgba(255,255,255,.9);
+  border:2px solid #fff;border-radius:18px;
+  padding:15px 18px;margin-bottom:10px;
+  font-size:18px;font-weight:700;color:#6b5b7a;cursor:pointer;
+  box-shadow:0 4px 12px rgba(150,180,255,.12);
+  animation:cardIn .4s ease both;
+}
+.read-lesson-btn:active{transform:scale(.97);}
+.read-lesson-count{font-size:14px;color:#9a8aa8;font-weight:500;}
+.reading-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:12px;
+  padding:14px 16px;
+}
+.reading-card{
+  background:rgba(255,255,255,.92);
+  border:2px solid #ffe3ee;border-radius:18px;
+  padding:14px 6px;cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  box-shadow:0 4px 12px rgba(255,150,180,.1);
+  transition:transform .15s,border-color .2s;
+}
+.reading-card:active{transform:scale(.93);}
+.reading-card.reading-active{border-color:#ff9ebb;background:#fff0f5;transform:scale(1.05);}
+.reading-char{font-size:34px;font-weight:800;color:#e07b9b;}
+.reading-py{font-size:14px;color:#8aa0c8;}
+.reading-words{font-size:12px;color:#9a8aa8;text-align:center;line-height:1.5;}
+.read-all-btn{margin:6px 16px 24px;width:calc(100% - 32px);}
+.read-all-btn:disabled{opacity:.5;}
+
+/* ========== 美乐蒂学习伙伴 ========== */
+.greet-img.companion{
+  width:110px;height:82px;object-fit:cover;
+  border-radius:16px;
+  box-shadow:0 4px 12px rgba(255,150,180,.25);
+  animation:bob 3s ease-in-out infinite;
+}
+.companion-banner{
+  margin:10px 16px 4px;
+  background:rgba(255,255,255,.85);
+  border-radius:22px;
+  padding:12px;
+  border:2px solid #fff;
+  box-shadow:0 6px 18px rgba(255,150,180,.12);
+  text-align:center;
+  animation:cardIn .5s ease both;
+}
+.companion-banner img{
+  width:100%;max-height:150px;object-fit:cover;object-position:top;
+  border-radius:14px;
+}
+.companion-banner p{
+  margin:10px 4px 4px;
+  font-size:15px;font-weight:700;color:#b5658f;
+}
+.win-mascot{
+  width:150px;height:110px;object-fit:cover;object-position:top;
+  border-radius:18px;
+  box-shadow:0 6px 16px rgba(255,150,180,.3);
+  margin-bottom:8px;
+}
+.companion-banner.slim{margin:10px 16px 0;padding:8px;}
+.companion-banner.slim img{max-height:110px;}

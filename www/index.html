@@ -13,56 +13,88 @@
 
   <!-- 首页 -->
   <div id="screen-home" class="screen active">
-    <div class="cloud c1">☁️</div>
-    <div class="cloud c2">☁️</div>
-    <div class="cloud c3">☁️</div>
-    <div class="home-wrap">
-      <div class="sanrio-row">
-        <img class="sanrio-avatar bounce1" src="img/kuromi.png" alt="库洛米">
-        <img class="sanrio-avatar bounce2" src="img/melody.png" alt="美乐蒂">
-        <img class="sanrio-avatar bounce3" src="img/cinnamoroll.png" alt="大耳狗">
+    <img class="corner-mascot tl" src="img/melody.png" alt="美乐蒂">
+    <img class="corner-mascot tr" src="img/kuromi.png" alt="库洛米">
+    <div class="home-nav">
+      <div class="home-nav-title">🎀 生字乐园</div>
+      <button class="icon-btn nav-btn" id="home-mistakes-btn">📝<span class="nav-badge" id="mistake-count">0</span></button>
+    </div>
+    <div class="home-wrap v2">
+      <div class="greet-card">
+        <div class="greet-text">
+          <div class="greet-hi" id="greet-hi">你好呀，小朋友！</div>
+          <div class="greet-sub">今天也要加油哦 💪</div>
+        </div>
+        <img class="greet-img companion" src="img/companion-teach.jpg" alt="美乐蒂学习伙伴">
       </div>
-      <h1 class="game-title">生字消消乐</h1>
-      <p class="game-sub">三年级上册 · 人教版 · <span id="total-chars">228</span> 个生字</p>
-      <div class="mode-grid">
-        <button class="mode-card" data-mode="match">
-          <span class="mode-emoji">🀄</span>
-          <span class="mode-name">配对消消乐</span>
-          <span class="mode-desc">汉字 ↔ 拼音连连看</span>
+      <div class="cat-grid">
+        <button class="cat-card cat-pink" data-cat="shengzi">
+          <span class="cat-icon">📝</span>
+          <span class="cat-name">生字</span>
+          <span class="cat-desc">认字 · 拼音 · 书写</span>
         </button>
-        <button class="mode-card" data-mode="pinyin">
-          <span class="mode-emoji">🔤</span>
-          <span class="mode-name">看拼音选字</span>
-          <span class="mode-desc">拼音对了字才对</span>
+        <button class="cat-card cat-blue" data-cat="zuci">
+          <span class="cat-icon">📚</span>
+          <span class="cat-name">组词</span>
+          <span class="cat-desc">词语搭配听写</span>
         </button>
-        <button class="mode-card" data-mode="dictation">
-          <span class="mode-emoji">🎧</span>
-          <span class="mode-name">听写闯关</span>
-          <span class="mode-desc">听词语写汉字</span>
+        <button class="cat-card cat-purple" data-cat="chuang">
+          <span class="cat-icon">🎮</span>
+          <span class="cat-name">词语闯关</span>
+          <span class="cat-desc">打怪兽 · 打气球</span>
         </button>
-        <button class="mode-card" data-mode="monster">
-          <img class="mode-img" src="img/kuromi.png" alt="库洛米">
-          <span class="mode-name">打怪兽</span>
-          <span class="mode-desc">拼音答对打怪兽</span>
-        </button>
-        <button class="mode-card" data-mode="balloon">
-          <img class="mode-img" src="img/cinnamoroll.png" alt="大耳狗">
-          <span class="mode-name">打气球</span>
-          <span class="mode-desc">打气球认生字</span>
-        </button>
-        <button class="mode-card" data-mode="write">
-          <img class="mode-img" src="img/melody.png" alt="美乐蒂">
-          <span class="mode-name">书写乐园</span>
-          <span class="mode-desc">手指写字词</span>
-        </button>
-        <button class="mode-card" data-mode="mistakes">
-          <span class="mode-emoji">📝</span>
-          <span class="mode-name">错字本</span>
-          <span class="mode-desc"><span id="mistake-count">0</span> 个待复习</span>
+        <button class="cat-card cat-yellow" data-cat="langdu">
+          <span class="cat-icon">🔊</span>
+          <span class="cat-name">课文朗读</span>
+          <span class="cat-desc">大声读出来</span>
         </button>
       </div>
+      <button class="mistake-strip" id="home-mistake-strip">
+        <span>📝 错字本</span>
+        <span class="mistake-strip-count"><b id="mistake-count2">0</b> 个待复习 ›</span>
+      </button>
       <p class="home-tip">💡 每天玩 10 分钟，生字记得牢</p>
     </div>
+    <img class="corner-mascot bl" src="img/kuromi.png" alt="库洛米">
+    <img class="corner-mascot br" src="img/melody.png" alt="美乐蒂">
+  </div>
+
+  <!-- 分类游戏选择 -->
+  <div id="screen-category" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="category-back">‹</button>
+      <h2 id="category-title">生字</h2>
+      <div class="topbar-spacer"></div>
+    </div>
+    <div class="companion-banner slim">
+      <img id="category-companion" src="img/companion-teach.jpg" alt="学习伙伴">
+    </div>
+    <div id="category-games" class="cat-game-list"></div>
+  </div>
+
+  <!-- 课文朗读：选课 -->
+  <div id="screen-read" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="read-back">‹</button>
+      <h2>课文朗读</h2>
+      <div class="topbar-spacer"></div>
+    </div>
+    <div class="companion-banner">
+      <img src="img/companion-teach.jpg" alt="美乐蒂领读">
+      <p>选一课，美乐蒂带你大声朗读 🔊</p>
+    </div>
+    <div id="read-lessons" class="read-lesson-list"></div>
+  </div>
+
+  <!-- 课文朗读：读词 -->
+  <div id="screen-reading" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="reading-back">‹</button>
+      <h2 id="reading-title">朗读</h2>
+      <button class="icon-btn" id="reading-play">🔊</button>
+    </div>
+    <div id="reading-grid" class="reading-grid"></div>
+    <button class="btn-primary read-all-btn" id="reading-all">▶ 全部朗读</button>
   </div>
 
   <!-- 关卡选择 -->
@@ -223,13 +255,17 @@
       <h2>错字本</h2>
       <button class="btn-secondary small" id="mistakes-clear">清空</button>
     </div>
+    <div class="companion-banner">
+      <img src="img/companion-encourage.jpg" alt="再试一次">
+      <p>错了没关系，美乐蒂陪你再试一次 💪</p>
+    </div>
     <div id="mistake-list" class="mistake-list"></div>
   </div>
 
   <!-- 过关弹窗 -->
   <div id="modal-win" class="modal hidden">
     <div class="modal-card">
-      <img class="win-mascot" src="img/melody.png" alt="美乐蒂">
+      <img class="win-mascot" src="img/companion-celebrate.jpg" alt="太棒了">
       <h2>过关啦！</h2>
       <div class="stars" id="win-stars">⭐⭐⭐</div>
       <p id="win-stats"></p>

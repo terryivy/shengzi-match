@@ -195,30 +195,137 @@ function comboBanner(text){
 }
 
 /* ---------- 屏幕 ---------- */
-var screens=['screen-home','screen-levels','screen-match','screen-pinyin','screen-dictation','screen-monster','screen-balloon','screen-write','screen-mistakes'];
+var screens=['screen-home','screen-category','screen-levels','screen-match','screen-pinyin','screen-dictation','screen-monster','screen-balloon','screen-write','screen-read','screen-reading','screen-mistakes'];
+
+/* ---------- v1.8 分类 ---------- */
+var CATEGORIES=[
+  {id:'shengzi', name:'生字', games:['match','pinyin','write'], img:'img/companion-teach.jpg'},
+  {id:'zuci', name:'组词', games:['dictation'], img:'img/companion-teach.jpg'},
+  {id:'chuang', name:'词语闯关', games:['monster','balloon'], img:'img/companion-challenge.jpg'},
+  {id:'langdu', name:'课文朗读', games:['read'], img:'img/companion-teach.jpg'}
+];
+var GAME_META={
+  match:{name:'配对消消乐', desc:'汉字 ↔ 拼音连连看', emoji:'🀄'},
+  pinyin:{name:'看拼音选字', desc:'拼音对了字才对', emoji:'🔤'},
+  write:{name:'书写乐园', desc:'手指写字词', img:'img/melody.png'},
+  dictation:{name:'听写闯关', desc:'听词语写汉字', emoji:'🎧'},
+  monster:{name:'打怪兽', desc:'拼音答对打怪兽', img:'img/kuromi.png'},
+  balloon:{name:'打气球', desc:'打气球认生字', img:'img/cinnamoroll.png'},
+  read:{name:'课文朗读', desc:'大声读出来', emoji:'🔊'}
+};
 function show(id){ screens.forEach(function(s){document.getElementById(s).classList.toggle('active',s===id);}); }
 function el(id){ return document.getElementById(id); }
 function shuffle(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t;} return a; }
 function centerOf(e){ var r=e.getBoundingClientRect(); return {x:r.left+r.width/2, y:r.top+r.height/2}; }
 
 function refreshHome(){
-  el('total-chars').textContent = CHARS.length;
   var n = Object.keys(save.mistakes).length;
   el('mistake-count').textContent = n;
+  var m2=el('mistake-count2'); if(m2) m2.textContent=n;
+  /* 问候语 */
+  var h=new Date().getHours();
+  var hi = h<6?'夜深了，早点休息哦！':(h<12?'上午好，小朋友！':(h<14?'中午好，小朋友！':(h<18?'下午好，小朋友！':'晚上好，小朋友！')));
+  var ghi=el('greet-hi'); if(ghi) ghi.textContent=hi;
 }
 
-/* ---------- 关卡选择 ---------- */
-var curMode=null;
-var MODE_NAMES={match:'配对消消乐',pinyin:'看拼音选字',dictation:'听写闯关',monster:'打怪兽',balloon:'打气球',write:'书写乐园'};
-document.querySelectorAll('.mode-card').forEach(function(btn){
+/* ---------- 分类选择 ---------- */
+var curCat=null;
+document.querySelectorAll('.cat-card').forEach(function(btn){
   btn.addEventListener('click',function(){
     SFX.click();
-    var m=btn.getAttribute('data-mode');
-    if(m==='mistakes'){ renderMistakes(); show('screen-mistakes'); return; }
-    curMode=m; renderLevels(); show('screen-levels');
+    var c=btn.getAttribute('data-cat');
+    openCategory(c);
   });
 });
-el('levels-back').addEventListener('click',function(){SFX.click();show('screen-home');});
+function openCategory(cid){
+  curCat=CATEGORIES.find(function(c){return c.id===cid;});
+  if(!curCat) return;
+  if(curCat.games.length===1 && curCat.games[0]==='read'){ openRead(); return; }
+  el('category-title').textContent=curCat.name;
+  el('category-companion').src=curCat.img;
+  var box=el('category-games'); box.innerHTML='';
+  curCat.games.forEach(function(g){
+    var meta=GAME_META[g];
+    var b=document.createElement('button');
+    b.className='cat-game-card';
+    var iconHtml = meta.img ? '<img class="cat-game-img" src="'+meta.img+'">' : '<span class="cat-game-emoji">'+meta.emoji+'</span>';
+    /* 本分类下各游戏最高星级 */
+    var best=0, total=LEVELS.length;
+    Object.keys(save.stars[g]||{}).forEach(function(k){ best+=save.stars[g][k]; });
+    b.innerHTML=iconHtml+'<span class="cat-game-text"><span class="cat-game-name">'+meta.name+'</span><span class="cat-game-desc">'+meta.desc+'</span></span><span class="cat-game-stars">⭐ '+best+'/'+(total*3)+'</span>';
+    b.addEventListener('click',function(){ SFX.click(); curMode=g; renderLevels(); show('screen-levels'); });
+    box.appendChild(b);
+  });
+  show('screen-category');
+}
+el('category-back').addEventListener('click',function(){SFX.click();show('screen-home');});
+el('home-mistakes-btn').addEventListener('click',function(){SFX.click();renderMistakes();show('screen-mistakes');});
+el('home-mistake-strip').addEventListener('click',function(){SFX.click();renderMistakes();show('screen-mistakes');});
+
+/* ---------- 课文朗读 ---------- */
+function openRead(){
+  var box=el('read-lessons'); box.innerHTML='';
+  var lastUnit=-1;
+  var lessons=[];
+  CHARS.forEach(function(c){ if(lessons.indexOf(c.lesson)<0) lessons.push(c.lesson); });
+  UNITS.forEach(function(u,ui){
+    var h=document.createElement('div');
+    h.className='unit-header';
+    h.innerHTML='<span>'+u.name+' · '+u.title+'</span>';
+    box.appendChild(h);
+    u.lessons.forEach(function(ln){
+      var chars=CHARS.filter(function(c){return c.lesson===ln;});
+      if(!chars.length) return;
+      var b=document.createElement('button');
+      b.className='read-lesson-btn';
+      b.innerHTML='<span class="read-lesson-name">'+ln+'</span><span class="read-lesson-count">'+chars.length+'字 🔊</span>';
+      b.addEventListener('click',function(){ SFX.click(); openReading(ln,chars); });
+      box.appendChild(b);
+    });
+  });
+  show('screen-read');
+}
+el('read-back').addEventListener('click',function(){SFX.click();show('screen-home');});
+var readingChars=[], readingLesson='';
+function openReading(lesson,chars){
+  readingLesson=lesson; readingChars=chars;
+  el('reading-title').textContent=lesson;
+  renderReading();
+  show('screen-reading');
+}
+function renderReading(){
+  var grid=el('reading-grid'); grid.innerHTML='';
+  readingChars.forEach(function(ch){
+    var d=document.createElement('button');
+    d.className='reading-card';
+    d.innerHTML='<span class="reading-char">'+ch.c+'</span><span class="reading-py">'+ch.py+'</span><span class="reading-words">'+ch.w.slice(0,2).join(' · ')+'</span>';
+    d.addEventListener('click',function(){
+      SFX.click();
+      d.classList.add('reading-active');
+      setTimeout(function(){d.classList.remove('reading-active');},800);
+      speak(ch.c+'。'+ch.w.join('，'));
+    });
+    grid.appendChild(d);
+  });
+}
+function readAll(){
+  var i=0;
+  SFX.click();
+  el('reading-all').disabled=true;
+  (function next(){
+    if(i>=readingChars.length){ el('reading-all').disabled=false; return; }
+    var ch=readingChars[i];
+    var cards=el('reading-grid').children;
+    if(cards[i]){ cards[i].classList.add('reading-active'); }
+    speak(ch.c+'，'+ch.w[0]);
+    i++;
+    setTimeout(function(){ if(cards[i-1]) cards[i-1].classList.remove('reading-active'); next(); }, 2200);
+  })();
+}
+el('reading-back').addEventListener('click',function(){SFX.click();try{speechSynthesis.cancel();}catch(e){}openRead();});
+el('reading-play').addEventListener('click',function(){readAll();});
+el('reading-all').addEventListener('click',function(){readAll();});
+el('levels-back').addEventListener('click',function(){SFX.click();if(curCat) openCategory(curCat.id); else show('screen-home');});
 function renderLevels(){
   el('levels-title').textContent = MODE_NAMES[curMode];
   var g=el('level-grid'); g.innerHTML='';
