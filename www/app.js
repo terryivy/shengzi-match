@@ -230,6 +230,8 @@ function refreshHome(){
 
 /* ---------- 分类选择 ---------- */
 var curCat=null;
+var curMode=null;
+var MODE_NAMES={match:'配对消消乐',pinyin:'看拼音选字',dictation:'听写闯关',monster:'打怪兽',balloon:'打气球',write:'书写乐园'};
 document.querySelectorAll('.cat-card').forEach(function(btn){
   btn.addEventListener('click',function(){
     SFX.click();
