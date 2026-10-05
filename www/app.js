@@ -62,6 +62,21 @@ function tone(freq, t0, dur, type, vol){
   o.start(t0); o.stop(t0+dur+0.05);
 }
 function now(){ var c=ac(); return c?c.currentTime:0; }
+/* 噪声爆发（爆炸、碎裂用） */
+function noiseBurst(t0, dur, vol, filterFreq){
+  var ctx=ac(); if(!ctx) return;
+  try{
+    var len=Math.max(1,Math.floor(ctx.sampleRate*dur));
+    var buf=ctx.createBuffer(1,len,ctx.sampleRate);
+    var d=buf.getChannelData(0);
+    for(var i=0;i<len;i++) d[i]=(Math.random()*2-1)*(1-i/len);
+    var src=ctx.createBufferSource(); src.buffer=buf;
+    var f=ctx.createBiquadFilter(); f.type='lowpass'; f.frequency.value=filterFreq||1000;
+    var g=ctx.createGain(); g.gain.value=vol||0.3;
+    src.connect(f); f.connect(g); g.connect(ctx.destination);
+    src.start(t0);
+  }catch(e){}
+}
 var SFX = {
   click: function(){ var t=now(); tone(600,t,0.08,'triangle',0.2); },
   select: function(){ var t=now(); tone(520,t,0.09,'triangle',0.22); tone(780,t+0.07,0.1,'triangle',0.18); },
@@ -71,7 +86,50 @@ var SFX = {
   hint: function(){ var t=now(); [880,1174,1568].forEach(function(f,i){ tone(f,t+i*0.07,0.14,'sine',0.15); }); },
   win: function(){ var t=now(); [523,659,784,1047,784,1047].forEach(function(f,i){ tone(f,t+i*0.12,0.2,'triangle',0.25); }); },
   star: function(i){ var t=now(); tone(900+i*250,t,0.25,'sine',0.25); tone((900+i*250)*1.5,t+0.08,0.2,'sine',0.15); },
-  pop: function(){ var t=now(); tone(300,t,0.06,'square',0.15); tone(900,t+0.05,0.12,'sine',0.2); }
+  pop: function(){ var t=now(); tone(300,t,0.06,'square',0.15); tone(900,t+0.05,0.12,'sine',0.2); },
+  /* v1.3 新增：战斗音效 */
+  roar: function(){ var t=now(); var ctx=ac(); if(!ctx) return;
+    try{
+      var o=ctx.createOscillator(), g=ctx.createGain(), lfo=ctx.createOscillator(), lg=ctx.createGain();
+      o.type='sawtooth'; o.frequency.setValueAtTime(95,t); o.frequency.linearRampToValueAtTime(58,t+0.5);
+      lfo.type='sine'; lfo.frequency.value=26; lg.gain.value=22;
+      lfo.connect(lg); lg.connect(o.frequency);
+      g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.28,t+0.06);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+0.62);
+      o.connect(g); g.connect(ctx.destination);
+      o.start(t); o.stop(t+0.65); lfo.start(t); lfo.stop(t+0.65);
+    }catch(e){}
+  },
+  whoosh: function(){ var t=now(); var ctx=ac(); if(!ctx) return;
+    try{
+      var o=ctx.createOscillator(), g=ctx.createGain();
+      o.type='sine'; o.frequency.setValueAtTime(180,t); o.frequency.exponentialRampToValueAtTime(1500,t+0.35);
+      g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.16,t+0.08);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+0.4);
+      o.connect(g); g.connect(ctx.destination); o.start(t); o.stop(t+0.45);
+    }catch(e){}
+  },
+  explosion: function(){ var t=now(); noiseBurst(t,0.5,0.38,750); tone(68,t,0.4,'sine',0.32); tone(48,t+0.05,0.5,'sine',0.28); },
+  hurt: function(){ var t=now(); var ctx=ac(); if(!ctx) return;
+    try{
+      var o=ctx.createOscillator(), g=ctx.createGain();
+      o.type='sawtooth'; o.frequency.setValueAtTime(420,t); o.frequency.exponentialRampToValueAtTime(130,t+0.3);
+      g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.2,t+0.03);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+0.36);
+      o.connect(g); g.connect(ctx.destination); o.start(t); o.stop(t+0.4);
+    }catch(e){}
+  },
+  laser: function(){ var t=now(); var ctx=ac(); if(!ctx) return;
+    try{
+      var o=ctx.createOscillator(), g=ctx.createGain();
+      o.type='square'; o.frequency.setValueAtTime(920,t); o.frequency.exponentialRampToValueAtTime(230,t+0.11);
+      g.gain.setValueAtTime(0.0001,t); g.gain.exponentialRampToValueAtTime(0.06,t+0.012);
+      g.gain.exponentialRampToValueAtTime(0.0001,t+0.13);
+      o.connect(g); g.connect(ctx.destination); o.start(t); o.stop(t+0.15);
+    }catch(e){}
+  },
+  shieldBreak: function(){ var t=now(); noiseBurst(t,0.28,0.3,3200); tone(1250,t,0.18,'square',0.1); tone(820,t+0.09,0.24,'square',0.09); },
+  defeated: function(){ var t=now(); [392,523,659,784].forEach(function(f,i){ tone(f,t+i*0.08,0.15,'triangle',0.22); }); }
 };
 
 /* ---------- 朗读 (听写用) ---------- */
@@ -495,6 +553,7 @@ var Monster={
     void body.offsetWidth;
     body.classList.add('enter');
     SFX.pop();
+    setTimeout(function(){ SFX.roar(); }, 200);
     var opts=shuffle([ch].concat(distractors(ch.c,3,ch.py)));
     var box=el('monster-options'); box.innerHTML='';
     var self=this;
@@ -539,6 +598,7 @@ var Monster={
     var fb=document.createElement('div'); fb.className='fireball'; fb.textContent='🔥';
     fb.style.left=(from.x-20)+'px'; fb.style.top=(from.y-20)+'px';
     el('fx-layer').appendChild(fb);
+    SFX.whoosh();
     var dx=to.x-from.x, dy=to.y-from.y;
     fb.animate([
       {transform:'translate(0,0) scale(.6) rotate(0deg)'},
@@ -549,7 +609,7 @@ var Monster={
       var body=el('monster-body');
       body.classList.add('hit');
       var p=centerOf(body);
-      particles(p.x,p.y,32); SFX.pop();
+      particles(p.x,p.y,32); SFX.explosion(); SFX.defeated();
       setTimeout(function(){
         body.classList.remove('hit'); body.classList.add('defeated');
         setTimeout(cb, 320);
@@ -561,7 +621,7 @@ var Monster={
     var body=el('monster-body');
     body.classList.add('lunge');
     arena.classList.add('shake-screen');
-    setTimeout(function(){ SFX.wrong(); },150);
+    setTimeout(function(){ SFX.hurt(); },150);
     floatScore(window.innerWidth/2, window.innerHeight*0.4, '💔');
     setTimeout(function(){
       arena.classList.remove('shake-screen');
@@ -638,7 +698,7 @@ var Plane={
   },
   shoot:function(){
     this.bullets.push({x:this.px-10,y:this.py-34},{x:this.px+10,y:this.py-34});
-    var t=now(); tone(700+Math.random()*200,t,0.07,'square',0.06);
+    SFX.laser();
   },
   boom:function(x,y,big){
     var n=big?26:14;
@@ -673,14 +733,14 @@ var Plane={
             this.kills++; this.score+=100;
             el('plane-kills').textContent=this.kills+'/'+this.need;
             el('plane-score').textContent=this.score;
-            this.boom(e.x,e.y,true); SFX.correct();
+            this.boom(e.x,e.y,true); SFX.explosion(); SFX.defeated();
             floatScore(e.x+this.cv.getBoundingClientRect().left, e.y+this.cv.getBoundingClientRect().top, '+100');
             if(this.kills>=this.need){ this.win(); return; }
             this.pickTarget();
           } else {
             this.shield--;
             el('plane-shield').textContent=Math.max(0,this.shield);
-            this.boom(e.x,e.y,false); SFX.wrong(); this.flash=300;
+            this.boom(e.x,e.y,false); SFX.shieldBreak(); this.flash=300;
             addMistake(this.target.c);
             if(this.shield<=0){ this.fail(); return; }
           }
