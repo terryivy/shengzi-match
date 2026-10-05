@@ -2,12 +2,38 @@
 (function(){
 "use strict";
 var CHARS = (typeof CHARS_3A !== 'undefined') ? CHARS_3A : [];
-var PER_LEVEL = 10;
+
+/* 单元划分（2025年修订版） */
+var UNITS = [
+  {name:"第一单元", title:"", lessons:["1 大青树下的小学","2 花的学校"]},
+  {name:"第二单元", title:"金秋时节", lessons:["4 古诗三首","5 铺满金色巴掌的水泥道","6 秋天的雨"]},
+  {name:"第三单元", title:"预测", lessons:["总也倒不了的老屋"]},
+  {name:"第四单元", title:"童话世界", lessons:["宝葫芦的秘密（节选）","在牛肚子里旅行"]},
+  {name:"第五单元", title:"留心观察", lessons:["搭船的鸟","金色的草地"]},
+  {name:"第六单元", title:"祖国山河", lessons:["富饶的西沙群岛","美丽的小兴安岭","海滨小城","古诗三首"]},
+  {name:"第七单元", title:"珍爱自然", lessons:["大自然的声音","父亲、树林和鸟","带刺的朋友"]},
+  {name:"第八单元", title:"美好品质", lessons:["司马光","灰雀","手术台就是阵地","一定要争气","掌声"]}
+];
+/* 每单元按课顺序取字，切成每关10字（末关不足5字并入上一关） */
 var LEVELS = [];
-for (var i = 0; i < CHARS.length; i += PER_LEVEL) LEVELS.push(CHARS.slice(i, i + PER_LEVEL));
+UNITS.forEach(function(u, ui){
+  var chars = [];
+  u.lessons.forEach(function(ln){
+    CHARS.forEach(function(c){ if(c.lesson===ln) chars.push(c); });
+  });
+  u.count = chars.length;
+  var chunks = [];
+  for (var i = 0; i < chars.length; i += 10) chunks.push(chars.slice(i, i+10));
+  if (chunks.length > 1 && chunks[chunks.length-1].length < 5){
+    chunks[chunks.length-2] = chunks[chunks.length-2].concat(chunks.pop());
+  }
+  chunks.forEach(function(ch, ci){
+    LEVELS.push({unit: ui, unitLevel: ci, chars: ch});
+  });
+});
 
 /* ---------- 存档 ---------- */
-var SAVE_KEY = 'shengzi_save_v1';
+var SAVE_KEY = 'shengzi_save_v2';
 var save = { stars: {match:{}, pinyin:{}, dictation:{}}, unlocked: {match:0, pinyin:0, dictation:0}, mistakes: {} };
 try {
   var s = localStorage.getItem(SAVE_KEY);
@@ -122,13 +148,22 @@ el('levels-back').addEventListener('click',function(){SFX.click();show('screen-h
 function renderLevels(){
   el('levels-title').textContent = MODE_NAMES[curMode];
   var g=el('level-grid'); g.innerHTML='';
+  var lastUnit=-1;
   LEVELS.forEach(function(lv,idx){
+    if(lv.unit!==lastUnit){
+      lastUnit=lv.unit;
+      var h=document.createElement('div');
+      h.className='unit-header';
+      var t=UNITS[lv.unit].title ? ' · '+UNITS[lv.unit].title : '';
+      h.innerHTML='<span>'+UNITS[lv.unit].name+t+'</span><span class="unit-count">'+UNITS[lv.unit].count+'字</span>';
+      g.appendChild(h);
+    }
     var b=document.createElement('button');
     var locked = idx > save.unlocked[curMode];
     b.className='level-btn'+(locked?' locked':'');
     var st = save.stars[curMode][idx]||0;
     var stars = st? '★'.repeat(st)+'☆'.repeat(3-st) : '☆☆☆';
-    b.innerHTML='<span>第 '+(idx+1)+' 关</span><span class="stars" style="color:#ffa94d">'+stars+'</span><span style="font-size:12px;color:#8a6f5c;font-weight:400">'+lv.length+'字</span>';
+    b.innerHTML='<span>第 '+(lv.unitLevel+1)+' 关</span><span class="stars" style="color:#ffa94d">'+stars+'</span><span style="font-size:12px;color:#8a6f5c;font-weight:400">'+lv.chars.length+'字</span>';
     if(!locked) b.addEventListener('click',function(){SFX.click();startLevel(curMode,idx);});
     g.appendChild(b);
   });
@@ -176,7 +211,7 @@ function levelNav(mode,idx){
 var Match={
   idx:0, chars:[], score:0, combo:0, hints:3, matched:0, total:0, first:null, lock:false, t0:0, timerId:null, errors:0,
   start:function(idx){
-    this.idx=idx; this.chars=LEVELS[idx]; this.score=0; this.combo=0; this.hints=3;
+    this.idx=idx; this.chars=LEVELS[idx].chars; this.score=0; this.combo=0; this.hints=3;
     this.matched=0; this.total=this.chars.length; this.first=null; this.lock=false; this.errors=0;
     el('match-score').textContent='0'; el('match-hints').textContent='3';
     el('match-progress').style.width='0%';
@@ -282,7 +317,7 @@ function distractors(excludeChar, n, preferPy){
 var PinyinQ={
   idx:0, qs:[], qi:0, score:0, correctCount:0, lock:false,
   start:function(idx){
-    this.idx=idx; this.qs=shuffle(LEVELS[idx].slice()); this.qi=0; this.score=0; this.correctCount=0;
+    this.idx=idx; this.qs=shuffle(LEVELS[idx].chars.slice()); this.qi=0; this.score=0; this.correctCount=0;
     el('pinyin-score').textContent='0';
     this.next(); show('screen-pinyin');
   },
@@ -339,7 +374,7 @@ var Dict={
   idx:0, qs:[], qi:0, score:0, correctCount:0, lock:false, word:'', picked:[],
   start:function(idx){
     this.idx=idx;
-    var chars=LEVELS[idx];
+    var chars=LEVELS[idx].chars;
     this.qs=shuffle(chars.slice()).map(function(ch){
       var ws=ch.w.filter(function(w){return w.length>=2&&w.length<=3;});
       return {ch:ch, word:ws[Math.floor(Math.random()*ws.length)]||ch.w[0]};
