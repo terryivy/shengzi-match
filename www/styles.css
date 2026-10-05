@@ -397,10 +397,10 @@ img.monster-emoji { filter: drop-shadow(0 10px 14px rgba(0,0,0,.45)); }
   width:64px;height:64px;object-fit:contain;
   pointer-events:none;opacity:.95;
 }
-.corner-mascot.tl{top:64px;left:-14px;transform:rotate(-12deg);animation:peekL 4s ease-in-out infinite;}
-.corner-mascot.tr{top:64px;right:-14px;transform:rotate(12deg);animation:peekR 4s ease-in-out infinite;}
-.corner-mascot.bl{bottom:18px;left:-10px;transform:rotate(10deg);animation:bob 3.5s ease-in-out infinite;}
-.corner-mascot.br{bottom:18px;right:-10px;transform:rotate(-10deg);animation:bob 4.2s ease-in-out infinite;}
+.corner-mascot.tl{top:64px;left:8px;transform:rotate(-12deg);animation:peekL 4s ease-in-out infinite;}
+.corner-mascot.tr{top:64px;right:8px;transform:rotate(12deg);animation:peekR 4s ease-in-out infinite;}
+.corner-mascot.bl{bottom:18px;left:10px;transform:rotate(10deg);animation:bob 3.5s ease-in-out infinite;}
+.corner-mascot.br{bottom:18px;right:10px;transform:rotate(-10deg);animation:bob 4.2s ease-in-out infinite;}
 @keyframes peekL{0%,100%{margin-left:0;}50%{margin-left:10px;}}
 @keyframes peekR{0%,100%{margin-right:0;}50%{margin-right:10px;}}
 @keyframes cardIn{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:none;}}
@@ -459,8 +459,8 @@ img.monster-emoji { filter: drop-shadow(0 10px 14px rgba(0,0,0,.45)); }
 
 /* ========== 美乐蒂学习伙伴 ========== */
 .greet-img.companion{
-  width:110px;height:82px;object-fit:cover;
-  border-radius:16px;
+  width:120px;height:90px;object-fit:contain;
+  border-radius:16px;background:#fff;
   box-shadow:0 4px 12px rgba(255,150,180,.25);
   animation:bob 3s ease-in-out infinite;
 }
@@ -475,18 +475,67 @@ img.monster-emoji { filter: drop-shadow(0 10px 14px rgba(0,0,0,.45)); }
   animation:cardIn .5s ease both;
 }
 .companion-banner img{
-  width:100%;max-height:150px;object-fit:cover;object-position:top;
-  border-radius:14px;
+  width:100%;max-height:170px;object-fit:contain;object-position:center;
+  border-radius:14px;background:linear-gradient(135deg,#fff5f8,#f0f7ff);
 }
 .companion-banner p{
   margin:10px 4px 4px;
   font-size:15px;font-weight:700;color:#b5658f;
 }
 .win-mascot{
-  width:150px;height:110px;object-fit:cover;object-position:top;
-  border-radius:18px;
+  width:180px;height:130px;object-fit:contain;object-position:center;
+  border-radius:18px;background:#fff;
   box-shadow:0 6px 16px rgba(255,150,180,.3);
   margin-bottom:8px;
 }
 .companion-banner.slim{margin:10px 16px 0;padding:8px;}
-.companion-banner.slim img{max-height:110px;}
+.companion-banner.slim img{max-height:130px;}
+
+/* ========== iPad mini / 大屏适配：字体放大 ========== */
+@media (min-width: 700px){
+  body{font-size:19px;}
+  .home-nav{padding:18px 26px 8px;}
+  .home-nav-title{font-size:30px;}
+  .nav-btn{width:56px;height:56px;font-size:30px;}
+  .greet-card{padding:24px 26px;margin:10px 8px 22px;}
+  .greet-hi{font-size:32px;}
+  .greet-sub{font-size:19px;}
+  .greet-img.companion{width:150px;height:112px;}
+  .cat-grid{gap:18px;margin:0 8px 20px;}
+  .cat-card{padding:32px 14px 26px;border-radius:30px;}
+  .cat-icon{font-size:58px;}
+  .cat-name{font-size:28px;}
+  .cat-desc{font-size:16px;}
+  .mistake-strip{font-size:21px;padding:18px 24px;}
+  .mistake-strip-count{font-size:17px;}
+  .home-tip{font-size:17px;}
+  .corner-mascot{width:88px;height:88px;}
+  .topbar{padding:14px 20px;}
+  .topbar h2{font-size:26px;}
+  .topbar-spacer{width:54px;}
+  .icon-btn{width:54px;height:54px;font-size:32px;border-radius:17px;}
+  .cat-game-card{padding:22px 24px;border-radius:26px;}
+  .cat-game-img{width:72px;height:72px;}
+  .cat-game-emoji{font-size:56px;}
+  .cat-game-name{font-size:25px;}
+  .cat-game-desc{font-size:17px;}
+  .cat-game-stars{font-size:17px;}
+  .companion-banner{margin:12px 20px 6px;}
+  .companion-banner p{font-size:18px;}
+  .companion-banner img{max-height:220px;}
+  .btn-primary,.btn-secondary{font-size:21px;padding:17px 30px;border-radius:20px;}
+  .unit-header{font-size:22px;}
+  .unit-header .unit-count{font-size:16px;}
+  .level-btn{font-size:18px;padding:18px 8px;border-radius:18px;}
+  .read-lesson-btn{font-size:22px;padding:19px 24px;}
+  .read-lesson-count{font-size:17px;}
+  .reading-grid{grid-template-columns:repeat(4,1fr);gap:16px;}
+  .reading-char{font-size:46px;}
+  .reading-py{font-size:17px;}
+  .reading-words{font-size:14px;}
+  .win-mascot{width:230px;height:165px;}
+  .modal-card h2{font-size:30px;}
+  .modal-card p{font-size:18px;}
+  .hud{font-size:21px;}
+  .hud-item b{font-size:22px;}
+}
