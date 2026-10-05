@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>生字消消乐</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="app">
+  <div id="fx-layer"></div>
+
+  <!-- 首页 -->
+  <div id="screen-home" class="screen active">
+    <div class="home-wrap">
+      <div class="mascot" id="home-mascot">🐱</div>
+      <h1 class="game-title">生字消消乐</h1>
+      <p class="game-sub">三年级上册 · 人教版 · <span id="total-chars">228</span> 个生字</p>
+      <div class="mode-grid">
+        <button class="mode-card" data-mode="match">
+          <span class="mode-emoji">🀄</span>
+          <span class="mode-name">配对消消乐</span>
+          <span class="mode-desc">汉字 ↔ 拼音连连看</span>
+        </button>
+        <button class="mode-card" data-mode="pinyin">
+          <span class="mode-emoji">🔤</span>
+          <span class="mode-name">看拼音选字</span>
+          <span class="mode-desc">拼音对了字才对</span>
+        </button>
+        <button class="mode-card" data-mode="dictation">
+          <span class="mode-emoji">🎧</span>
+          <span class="mode-name">听写闯关</span>
+          <span class="mode-desc">听词语写汉字</span>
+        </button>
+        <button class="mode-card" data-mode="mistakes">
+          <span class="mode-emoji">📝</span>
+          <span class="mode-name">错字本</span>
+          <span class="mode-desc"><span id="mistake-count">0</span> 个待复习</span>
+        </button>
+      </div>
+      <p class="home-tip">💡 每天玩 10 分钟，生字记得牢</p>
+    </div>
+  </div>
+
+  <!-- 关卡选择 -->
+  <div id="screen-levels" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="levels-back">‹</button>
+      <h2 id="levels-title">选关卡</h2>
+      <div class="topbar-spacer"></div>
+    </div>
+    <div id="level-grid" class="level-grid"></div>
+  </div>
+
+  <!-- 配对消消乐 -->
+  <div id="screen-match" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="match-back">‹</button>
+      <div class="hud">
+        <span class="hud-item">⭐ <b id="match-score">0</b></span>
+        <span class="hud-item">⏱ <b id="match-time">0:00</b></span>
+        <span class="hud-item">💡 <b id="match-hints">3</b></span>
+      </div>
+      <button class="icon-btn" id="match-hint-btn">💡</button>
+    </div>
+    <div class="progress-wrap"><div class="progress-bar" id="match-progress"></div></div>
+    <div id="match-board" class="match-board"></div>
+    <div id="combo-banner" class="combo-banner hidden"></div>
+  </div>
+
+  <!-- 看拼音选字 -->
+  <div id="screen-pinyin" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="pinyin-back">‹</button>
+      <div class="hud">
+        <span class="hud-item">⭐ <b id="pinyin-score">0</b></span>
+        <span class="hud-item"><b id="pinyin-q">1</b>/10</span>
+      </div>
+      <div class="topbar-spacer"></div>
+    </div>
+    <div class="progress-wrap"><div class="progress-bar" id="pinyin-progress"></div></div>
+    <div class="quiz-wrap">
+      <div class="quiz-pinyin" id="pinyin-question">píng</div>
+      <div class="quiz-hint" id="pinyin-word-hint"></div>
+      <div class="quiz-options" id="pinyin-options"></div>
+    </div>
+  </div>
+
+  <!-- 听写闯关 -->
+  <div id="screen-dictation" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="dict-back">‹</button>
+      <div class="hud">
+        <span class="hud-item">⭐ <b id="dict-score">0</b></span>
+        <span class="hud-item"><b id="dict-q">1</b>/10</span>
+      </div>
+      <button class="icon-btn" id="dict-replay">🔊</button>
+    </div>
+    <div class="progress-wrap"><div class="progress-bar" id="dict-progress"></div></div>
+    <div class="quiz-wrap">
+      <button class="big-speaker" id="dict-speaker">🔊<span>点我听词语</span></button>
+      <div class="dict-slots" id="dict-slots"></div>
+      <div class="quiz-options dict-options" id="dict-options"></div>
+      <div class="dict-actions">
+        <button class="btn-secondary" id="dict-clear">重选</button>
+        <button class="btn-primary" id="dict-submit">确定</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 错字本 -->
+  <div id="screen-mistakes" class="screen">
+    <div class="topbar">
+      <button class="icon-btn" id="mistakes-back">‹</button>
+      <h2>错字本</h2>
+      <button class="btn-secondary small" id="mistakes-clear">清空</button>
+    </div>
+    <div id="mistake-list" class="mistake-list"></div>
+  </div>
+
+  <!-- 过关弹窗 -->
+  <div id="modal-win" class="modal hidden">
+    <div class="modal-card">
+      <div class="mascot dance">🐱</div>
+      <h2>过关啦！</h2>
+      <div class="stars" id="win-stars">⭐⭐⭐</div>
+      <p id="win-stats"></p>
+      <div class="modal-btns">
+        <button class="btn-secondary" id="win-replay">再玩一次</button>
+        <button class="btn-primary" id="win-next">下一关</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="data/chars-3a.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

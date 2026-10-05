@@ -1,0 +1,8 @@
+{
+  "appId": "com.terry.shengzi",
+  "appName": "生字消消乐",
+  "webDir": "www",
+  "ios": {
+    "contentInset": "always"
+  }
+}
