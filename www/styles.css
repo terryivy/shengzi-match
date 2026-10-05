@@ -249,16 +249,25 @@ body {
 .shockwave { position: fixed; border: 5px solid rgba(255,200,90,.95); border-radius: 50%;
   pointer-events: none; z-index: 1001; transform: translate(-50%,-50%); }
 
-/* ===== v1.3: 飞机大战 ===== */
-.plane-target { text-align: center; font-size: 18px; font-weight: 800; padding: 9px 8px;
+/* ===== v1.3: 打气球 ===== */
+.balloon-target { text-align: center; font-size: 18px; font-weight: 800; padding: 9px 8px;
   background: var(--card); margin: 2px 16px 0; border-radius: 14px;
   box-shadow: 0 2px 8px rgba(0,0,0,.08); animation: cardUp .3s backwards; }
-.plane-target b { color: var(--red); font-size: 26px; letter-spacing: 1px; }
-.plane-target.target-pulse { animation: targetPulse .6s; }
+.balloon-target b { color: var(--red); font-size: 26px; letter-spacing: 1px; }
+.balloon-target.target-pulse { animation: targetPulse .6s; }
 @keyframes targetPulse { 0%{transform:scale(.92); box-shadow:0 0 0 var(--yellow)} 50%{transform:scale(1.04); box-shadow:0 0 22px var(--yellow)} 100%{transform:scale(1)} }
-#plane-canvas { flex: 1; margin: 8px 16px 6px; border-radius: 20px; touch-action: none;
-  box-shadow: 0 6px 22px rgba(0,0,0,.25); min-height: 200px; }
-.plane-tip { text-align: center; color: var(--ink-soft); font-size: 13px; padding-bottom: 12px; }
+/* ===== v1.7: 打气球 ===== */
+.balloon-stage { flex: 1; position: relative; margin: 8px 16px 6px; min-height: 200px; }
+#balloon-canvas { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 20px; touch-action: none;
+  box-shadow: 0 6px 22px rgba(0,0,0,.18); }
+.fire-btn { position: absolute; right: 12px; bottom: 86px; width: 84px; height: 84px; border-radius: 50%;
+  border: 4px solid #fff; background: linear-gradient(135deg, var(--red), var(--orange)); color: #fff;
+  font-size: 15px; font-weight: 900; cursor: pointer; z-index: 5;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0;
+  box-shadow: 0 6px 18px rgba(255,107,141,.5); font-family: inherit; }
+.fire-btn span { font-size: 14px; }
+.fire-btn:active { transform: scale(.9); }
+.balloon-tip { text-align: center; color: var(--ink-soft); font-size: 13px; padding-bottom: 12px; }
 
 /* iPad 大屏：怪兽更大 */
 @media (min-width: 700px) {

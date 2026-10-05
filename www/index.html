@@ -45,10 +45,10 @@
           <span class="mode-name">打怪兽</span>
           <span class="mode-desc">拼音答对打怪兽</span>
         </button>
-        <button class="mode-card" data-mode="plane">
+        <button class="mode-card" data-mode="balloon">
           <img class="mode-img" src="img/cinnamoroll.png" alt="大耳狗">
-          <span class="mode-name">飞机大战</span>
-          <span class="mode-desc">开飞机打字怪</span>
+          <span class="mode-name">打气球</span>
+          <span class="mode-desc">打气球认生字</span>
         </button>
         <button class="mode-card" data-mode="write">
           <img class="mode-img" src="img/melody.png" alt="美乐蒂">
@@ -161,20 +161,23 @@
     </div>
   </div>
 
-  <!-- 飞机大战 -->
-  <div id="screen-plane" class="screen">
+  <!-- 打气球 -->
+  <div id="screen-balloon" class="screen">
     <div class="topbar">
-      <button class="icon-btn" id="plane-back">‹</button>
+      <button class="icon-btn" id="balloon-back">‹</button>
       <div class="hud">
-        <span class="hud-item">🛡️ <b id="plane-shield">3</b></span>
-        <span class="hud-item">🎯 <b id="plane-kills">0/6</b></span>
-        <span class="hud-item">⭐ <b id="plane-score">0</b></span>
+        <span class="hud-item">🛡️ <b id="balloon-shield">3</b></span>
+        <span class="hud-item">🎯 <b id="balloon-kills">0/6</b></span>
+        <span class="hud-item">⭐ <b id="balloon-score">0</b></span>
       </div>
       <div class="topbar-spacer"></div>
     </div>
-    <div class="plane-target">🎯 击落 <b id="plane-target-py">píng</b> 的汉字战机！</div>
-    <canvas id="plane-canvas"></canvas>
-    <div class="plane-tip">👆 手指拖动飞机移动，会自动开火</div>
+    <div class="balloon-target">🎯 打破 <b id="balloon-target-py">píng</b> 的汉字气球！</div>
+    <div class="balloon-stage">
+      <canvas id="balloon-canvas"></canvas>
+      <button class="fire-btn" id="balloon-fire">🎈<span>发射</span></button>
+    </div>
+    <div class="balloon-tip">👆 拖动大耳狗移动 · 点发射或直接点气球射击</div>
   </div>
 
   <!-- 书写乐园 -->
