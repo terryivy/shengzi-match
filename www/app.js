@@ -1208,7 +1208,18 @@ el('mistakes-clear').addEventListener('click',function(){
 });
 
 /* ---------- 启动 ---------- */
-document.addEventListener('touchmove',function(e){e.preventDefault();},{passive:false});
+/* 允许滚动容器内触摸滑动，其余区域阻止页面乱弹 */
+document.addEventListener('touchmove',function(e){
+  var t=e.target;
+  while(t&&t!==document){
+    if(t.classList){
+      var c=t.classList;
+      if(c.contains('level-grid')||c.contains('read-lesson-list')||c.contains('reading-grid')||c.contains('mistake-list')||c.contains('cat-game-list')||c.contains('quiz-wrap')) return;
+    }
+    t=t.parentNode;
+  }
+  e.preventDefault();
+},{passive:false});
 var sanrioRow=document.querySelector('.sanrio-row');
 if(sanrioRow) sanrioRow.addEventListener('click',function(){SFX.pop();confetti();});
 refreshHome();
