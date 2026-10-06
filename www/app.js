@@ -350,6 +350,14 @@ function renderLevels(){
     if(!locked) b.addEventListener('click',function(){SFX.click();startLevel(curMode,idx);});
     g.appendChild(b);
   });
+  /* 还有更多单元时显示滑动提示 */
+  var hint=el('level-scroll-hint');
+  if(hint){
+    g.scrollTop=0;
+    var showHint=function(){ hint.classList.toggle('hidden', g.scrollHeight<=g.clientHeight+10 || g.scrollTop>30); };
+    g.onscroll=showHint;
+    setTimeout(showHint,300);
+  }
 }
 function startLevel(mode,idx){
   if(mode==='match') Match.start(idx);

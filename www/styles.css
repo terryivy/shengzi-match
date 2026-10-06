@@ -539,3 +539,21 @@ img.monster-emoji { filter: drop-shadow(0 10px 14px rgba(0,0,0,.45)); }
   .hud{font-size:21px;}
   .hud-item b{font-size:22px;}
 }
+
+/* 滑动提示 */
+.scroll-hint{
+  position:absolute;left:50%;bottom:26px;transform:translateX(-50%);
+  background:rgba(255,255,255,.95);color:#b5658f;
+  font-size:16px;font-weight:800;
+  padding:10px 22px;border-radius:24px;
+  box-shadow:0 6px 18px rgba(255,150,180,.3);
+  border:2px solid #ffd3e6;
+  animation:hintBob 1.2s ease-in-out infinite;
+  z-index:20;pointer-events:none;white-space:nowrap;
+}
+.scroll-hint.hidden{display:none;}
+@keyframes hintBob{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(8px);}}
+@media (min-width: 700px){ .scroll-hint{font-size:20px;padding:14px 30px;} }
+/* iOS 惯性滚动 */
+.level-grid,.read-lesson-list,.mistake-list,.cat-game-list{-webkit-overflow-scrolling:touch;}
+#screen-levels{position:relative;}
